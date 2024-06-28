@@ -13,7 +13,7 @@ def isNotUser(func):
 def isUser(func):
 	@wraps(func)
 	def decorated_function(*args, **kwargs):
-		if 'userId' in session and User.isUser(session['userId']):
+		if 'userId' in session and 'name' in session and User.isUser(session['userId']):
 			return func(*args, **kwargs)
 		return redirect(f'/login?next={request.url}')
 	return decorated_function

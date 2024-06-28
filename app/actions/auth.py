@@ -2,13 +2,12 @@ from flask import render_template,session,request,redirect,jsonify
 from . import app
 from app import db
 from app.models import User
+from app.wrapers import isUser,isNotUser
 import bcrypt
 
 @app.route('/login',methods=["POST"])
+@isNotUser
 def login():
-	if 'userId' in session and User.isUser(session['userId']):
-		return redirect('/')
-	
 	data = request.form.deepcopy()
 	rq=['name','password']
 	if any(i not in data for i in rq):
@@ -18,15 +17,14 @@ def login():
 	user = User.query.filter_by(name=data['name']).first()
 	if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password):
 		session['userId']=user.id
+		session['name']=user.name
 		return redirect(request.form.get("next",'/'))
 	
 	return redirect('/login?error=Incorrect name or password')
 
 @app.route('/signUp',methods=["POST"])
+@isNotUser
 def signUp():
-	if 'userId' in session and User.isUser(session['userId']):
-		return redirect('/')
-	
 	data = request.form.deepcopy()
 	
 	rq=['name','password']
@@ -45,6 +43,7 @@ def signUp():
 	return redirect(request.form.get("next",'/login'))
 
 @app.route('/logout',methods=["GET","POST"])
+@isUser
 def logout():
-    session.pop('userId')
-    return redirect('/login')
+    session.clear()
+    return redirect('/')
