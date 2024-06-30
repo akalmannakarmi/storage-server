@@ -25,13 +25,14 @@
 	</div>
 	<div class="container">
 		{% for key,value in data.items() %}
-			<div class="row">
+			<div class="d-flex align-items-center">
 				{% if value is none %}
-				<a href="/download/{{key}}?current={{current}}" target="_blank">{{key}}</a>
+				<a href="/download/{{key}}?current={{current}}" target="_blank" class="me-2">{{key}}</a>
+				<i class="fas fa-trash-alt delete-icon" hx-get="/delete/{{key}}?current={{current}}" hx-trigger="click" hx-swap="innerHTML" hx-target="#selected-files"></i>
 				{% else %}
-				<div hx-target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/components/myFiles?current={{current}}&next={{key}}">{{key}}</div>
+				<div hx-target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/components/myFiles?current={{current}}&next={{key}}" class="me-2">{{key}}</div>
 				{% endif %}
-			</div>
+		</div>
 		{% endfor %}
 	</div>
 	<script src="/static/js/upload.js"></script>

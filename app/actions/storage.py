@@ -73,3 +73,10 @@ def downloadPublic(filename):
 		path = Storage.getPathPublic(request.args.get("current",""))
 		return send_from_directory(path, filename, as_attachment=True)
 	return render_template("/basic/warn.html",msg="You can not Download the file")
+
+@app.route('/delete/<filename>',methods=["GET"])
+@isUser
+def delete(filename):
+	if Storage.delete(session["name"],request.args.get("current",""),filename):
+		return render_template("/basic/success.html",msg=f"Deleted {filename}")
+	return render_template("/basic/warn.html",msg="Failed to delete")

@@ -100,7 +100,22 @@ class Storage:
 		
 		if not isSafePath(Storage.publicDataPath,path):
 			return False
-		return os.path.exists(path)
+		return os.path.exists(path)	
+
+	@staticmethod
+	def delete(name, current, fileName):
+		if current == "":
+			path = os.path.join(Storage.privateDataPath, name, fileName)
+		else:
+			path = os.path.join(Storage.privateDataPath, name, current, fileName)
+		
+		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
+			return False
+		if os.path.isfile(path):
+			os.remove(path)
+			Storage.updateFileTree()
+			return True
+		return False
 
 	@staticmethod
 	def updateFileTree():
