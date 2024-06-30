@@ -1,9 +1,25 @@
-<div id="content">
+<div id="content" class="container drag-drop" style="min-height: 70vh;">
+	<div class="container d-flex">
+		<div id="file-dropzone" class="dropzone col-6">
+				Drop files here
+		</div>
+		<div id="folder-dropzone" class="dropzone col-6">
+				Drop folders here
+		</div>
+	</div>
+
+	<div id="selected-files"></div>
+	<form id="file-form" enctype="multipart/form-data" hx-post="/uploadPublic" hx-swap="innerHTML" hx-target="#selected-files">
+			<input type="file" name="file" id="file-input" multiple style="display:none;">
+			<input type="file" name="file" id="folder-input" multiple webkitdirectory style="display:none;">
+			<button type="submit" name="current" value="{{current}}">Upload</button>
+	</form>
+
 	<div> 
 		<p> 
-			<a target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/publicFiles?current=">Public Files</a> 
+			<a hx-target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/components/publicFiles?current=">Public Files</a> 
 			{% for folder,path in pathDict.items() %}
-				/ <a target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/publicFiles?current={{path}}">{{folder}}</a> 
+				/ <a hx-target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/components/publicFiles?current={{path}}">{{folder}}</a> 
 			{% endfor %}
 		</p>
 	</div>
@@ -11,11 +27,12 @@
 		{% for key,value in data.items() %}
 			<div class="row">
 				{% if value is none %}
-				<a href="/downloadPublic/{{key}}?current={{current}}">{{key}}</a>
+				<a href="/downloadPublic/{{key}}?current={{current}}" target="_blank">{{key}}</a>
 				{% else %}
-				<div target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/publicFiles?current={{current}}&next={{key}}">{{key}}</div>
+				<div hx-target="#content" hx-swap="outerHTML" hx-trigger="click" hx-get="/components/publicFiles?current={{current}}&next={{key}}">{{key}}</div>
 				{% endif %}
 			</div>
 		{% endfor %}
 	</div>
+	<script src="/static/js/upload.js"></script>
 </div>

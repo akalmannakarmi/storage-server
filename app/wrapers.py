@@ -5,7 +5,7 @@ from app.models import User
 def isNotUser(func):
 	@wraps(func)
 	def decorated_function(*args, **kwargs):
-		if 'userId' in session and User.isUser(session['userId']):
+		if 'userId' in session and 'name' in session and User.isUser(session['userId']):
 			return redirect('/')
 		return func(*args, **kwargs)
 	return decorated_function

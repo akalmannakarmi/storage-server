@@ -1,8 +1,12 @@
 {% set subPage = 'publicFiles' %}
+
 {% extends 'storage/base.html' %}
+
+{% block title %} Public Files {% endblock %}
 
 {% block content %}
 <div class="container-fluid p-0">
-	<div hx-get="/components/storage/publicFiles?current={{current}}" hx-trigger="load" hx-swap="outerHTML"></div>
+	<h1 class="container pt-5">Public Files</h1>
+	<div hx-get="/components/publicFiles?current={{current}}" hx-trigger="load" hx-swap="outerHTML"></div>
 </div>
 {% endblock %}

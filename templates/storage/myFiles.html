@@ -1,8 +1,12 @@
 {% set subPage = 'myFiles' %}
+
 {% extends 'storage/base.html' %}
+
+{% block title %} My Files {% endblock %}
 
 {% block content %}
 <div class="container-fluid p-0">
-	<div hx-get="/components/storage/myFiles?current={{current}}" hx-trigger="load" hx-swap="outerHTML"></div>
+	<h1 class="container pt-5">My Files</h1>
+	<div hx-get="/components/myFiles?current={{current}}" hx-trigger="load" hx-swap="outerHTML"></div>
 </div>
 {% endblock %}

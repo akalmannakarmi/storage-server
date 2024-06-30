@@ -1,58 +1,74 @@
 import os
 from .tools import getFileTree,isAllowed
 
-dataPath=""
-publicDataPath=""
-privateDataPath=""
+class Storage:
+	@staticmethod
+	def init(data_path):
+		Storage.dataPath = data_path
+		Storage.publicDataPath = os.path.join(Storage.dataPath, "public")
+		Storage.privateDataPath = os.path.join(Storage.dataPath, "private")
 
-fileTree = {}
+		os.makedirs(Storage.publicDataPath, exist_ok=True)
+		os.makedirs(Storage.privateDataPath, exist_ok=True)
 
-def init(data_path):
-	global dataPath,publicDataPath,privateDataPath,fileTree
-	dataPath = data_path
-	publicDataPath=os.path.join(dataPath,"public")
-	privateDataPath=os.path.join(dataPath,"private")
+		Storage.fileTree = Storage.updateFileTree()
 
-	os.makedirs(publicDataPath,exist_ok=True)
-	os.makedirs(privateDataPath,exist_ok=True)
+	@staticmethod
+	def createAccount(name):
+		os.makedirs(f"{Storage.privateDataPath}/{name}", exist_ok=True)
+		Storage.updateFileTree()
 
-	fileTree=tools.getFileTree(dataPath)
+	@staticmethod
+	def createPath(name, current, fileName):
+		if current == "":
+			path = os.path.join(Storage.privateDataPath, name, os.path.dirname(fileName))
+		else:
+			path = os.path.join(Storage.privateDataPath, name, current, os.path.dirname(fileName))
+		os.makedirs(path, exist_ok=True)
 
-def createAccount(name):
-	os.makedirs(f"{privateDataPath}/{name}",exist_ok=True)
+		filePath = os.path.join(Storage.privateDataPath, name, fileName)
+		if os.path.exists(filePath):
+			return False
 
-def createPath(name,current,fileName):
-	if current=="":
-		path = os.path.join(privateDataPath,name,os.path.dirname(fileName))
-	else:
-		path = os.path.join(privateDataPath,name,current,os.path.dirname(fileName))
-	os.makedirs(path,exist_ok=True)
-
-	filePath = os.path.join(privateDataPath,name,fileName)
-	if os.path.exists(filePath):
-		return False
-
-	updateFileTree()
-
-def getPath(name,current):
-	if current=="":
-		return os.path.join(privateDataPath,name)
-	return os.path.join(privateDataPath,current,name)
-
-def getPathPublic(current):
-	if current=="":
-		return publicDataPath
-	return os.path.join(publicDataPath,current)
-
-def canDownload(name,current,fileName):
-	if current=="":
-		path = os.path.join(privateDataPath,name,fileName)
-	else:
-		path = os.path.join(privateDataPath,name,current,fileName)
-	if os.path.exists(path):
+		Storage.updateFileTree()
 		return True
-	return False
+		
+	@staticmethod
+	def createPathPublic(current, fileName):
+		if current == "":
+			path = os.path.join(Storage.publicDataPath, os.path.dirname(fileName))
+		else:
+			path = os.path.join(Storage.publicDataPath, current, os.path.dirname(fileName))
+		os.makedirs(path, exist_ok=True)
 
-def updateFileTree():
-	global fileTree,dataPath
-	fileTree=tools.getFileTree(dataPath)
+		filePath = os.path.join(Storage.publicDataPath, fileName)
+		if os.path.exists(filePath):
+			return False
+
+		Storage.updateFileTree()
+		return True
+
+	@staticmethod
+	def getPath(name, current):
+		if current == "":
+			return os.path.join(Storage.privateDataPath, name)
+		return os.path.join(Storage.privateDataPath,name, current)
+
+	@staticmethod
+	def getPathPublic(current):
+		if current == "":
+			return Storage.publicDataPath
+		return os.path.join(Storage.publicDataPath, current)
+
+	@staticmethod
+	def canDownload(name, current, fileName):
+		if current == "":
+			path = os.path.join(Storage.privateDataPath, name, fileName)
+		else:
+			path = os.path.join(Storage.privateDataPath, name, current, fileName)
+		return os.path.exists(path)
+
+	@staticmethod
+	def updateFileTree():
+		Storage.fileTree = getFileTree(Storage.dataPath)
+		return Storage.fileTree

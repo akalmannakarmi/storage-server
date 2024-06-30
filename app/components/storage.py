@@ -1,7 +1,7 @@
 from flask import render_template,session,request,redirect,make_response
 from app.wrapers import isUser
 from . import app
-from storage import fileTree
+from storage import Storage
 import os
 
 @app.route('/myFiles',methods=["GET"])
@@ -10,8 +10,9 @@ def myFiles():
 	current=request.args.get('current',"")
 	if 'next' in request.args:
 		current = os.path.join(current,request.args.get("next"))
+	
 	folders = current.split(os.sep)
-	data = fileTree["private"][session["name"]]
+	data = Storage.fileTree["private"][session["name"]]
 	pathDict = {}
 	current_path = ''
 		
@@ -23,7 +24,7 @@ def myFiles():
 
 	response = make_response(render_template('_components/storage/myFiles.html',session=session,current=current,data=data,pathDict=pathDict))
 	response.headers['HX-Location'] = f"/myFiles?current={current}"
-	return response
+	return render_template('_components/storage/myFiles.html',session=session,current=current,data=data,pathDict=pathDict)
 
 @app.route('/publicFiles',methods=["GET"])
 @isUser
@@ -31,8 +32,9 @@ def publicFiles():
 	current=request.args.get('current',"")
 	if 'next' in request.args:
 		current = os.path.join(current,request.args.get("next"))
+	
 	folders = current.split(os.sep)
-	data = fileTree["private"]
+	data = Storage.fileTree["public"]
 	pathDict = {}
 	current_path = ''
 		
@@ -42,6 +44,4 @@ def publicFiles():
 		current_path = os.path.join(current_path, folder)
 		pathDict[folder] = current_path
 
-	response = make_response(render_template('_components/storage/publicFiles.html',session=session,current=current,data=data,pathDict=pathDict))
-	response.headers['HX-Location'] = f"/publicFiles?current={current}"
-	return response
+	return render_template('_components/storage/publicFiles.html',session=session,current=current,data=data,pathDict=pathDict)

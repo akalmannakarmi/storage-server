@@ -3,6 +3,7 @@ from . import app
 from app import db
 from app.models import User
 from app.wrapers import isUser,isNotUser
+from storage import Storage
 import bcrypt
 
 @app.route('/login',methods=["POST"])
@@ -18,6 +19,7 @@ def login():
 	if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password):
 		session['userId']=user.id
 		session['name']=user.name
+		Storage.createAccount(user.name)
 		return redirect(request.form.get("next",'/'))
 	
 	return redirect('/login?error=Incorrect name or password')

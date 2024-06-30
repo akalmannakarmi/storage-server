@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 
 {% block body %}
-	<nav class="navbar navbar-expand-lg {{mode}} px-4">
-		<a class="navbar-brand" href="#">Storage</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg {{mode}} px-4">
+	<a class="navbar-brand" href="#">Storage</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-			<div class="navbar-nav {{mode}}">
-				<a class="nav-item nav-link px-2 {%if subPage=='myFiles'%}active{%endif%}" href="/myFiles">MyFiles</a>
-				<a class="nav-item nav-link px-2 {%if subPage=='publicFiles'%}active{%endif%}" href="/publicFiles">Public Files</a>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav {{mode}} me-auto">
+					<a class="nav-item nav-link px-2 {%if subPage=='myFiles'%}active{%endif%}" href="/myFiles">MyFiles</a>
+					<a class="nav-item nav-link px-2 {%if subPage=='publicFiles'%}active{%endif%}" href="/publicFiles">Public Files</a>
 			</div>
-		</div>
-	</nav>
-	{% block content %}{% endblock %}
+			<div class="navbar-text">
+					<a class="nav-item nav-link px-2" href="/logout">Logout</a>
+			</div>
+	</div>
+</nav>
+{% block content %}{% endblock %}
 {% endblock %}

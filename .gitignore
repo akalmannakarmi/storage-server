@@ -2,3 +2,4 @@
 static/bootstrap
 instance/
 venv/
+data/
