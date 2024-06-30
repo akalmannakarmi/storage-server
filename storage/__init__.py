@@ -1,5 +1,5 @@
 import os
-from .tools import getFileTree,isAllowed
+from .tools import getFileTree,isAllowed,isSafePath
 
 class Storage:
 	@staticmethod
@@ -15,8 +15,12 @@ class Storage:
 
 	@staticmethod
 	def createAccount(name):
-		os.makedirs(f"{Storage.privateDataPath}/{name}", exist_ok=True)
+		path=os.path.join(Storage.privateDataPath, name)
+		if not isSafePath(Storage.privateDataPath,path):
+			return False
+		os.makedirs(path, exist_ok=True)
 		Storage.updateFileTree()
+		return True
 
 	@staticmethod
 	def createPath(name, current, fileName):
@@ -24,6 +28,10 @@ class Storage:
 			path = os.path.join(Storage.privateDataPath, name, os.path.dirname(fileName))
 		else:
 			path = os.path.join(Storage.privateDataPath, name, current, os.path.dirname(fileName))
+		
+		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
+			return False
+		
 		os.makedirs(path, exist_ok=True)
 
 		filePath = os.path.join(Storage.privateDataPath, name, fileName)
@@ -39,6 +47,10 @@ class Storage:
 			path = os.path.join(Storage.publicDataPath, os.path.dirname(fileName))
 		else:
 			path = os.path.join(Storage.publicDataPath, current, os.path.dirname(fileName))
+		
+		if not isSafePath(Storage.publicDataPath,path):
+			return False
+		
 		os.makedirs(path, exist_ok=True)
 
 		filePath = os.path.join(Storage.publicDataPath, fileName)
@@ -51,14 +63,22 @@ class Storage:
 	@staticmethod
 	def getPath(name, current):
 		if current == "":
-			return os.path.join(Storage.privateDataPath, name)
-		return os.path.join(Storage.privateDataPath,name, current)
+			path= os.path.join(Storage.privateDataPath, name)
+		else:
+			path= os.path.join(Storage.privateDataPath,name, current)
+		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
+			return Storage.privateDataPath
+		return path
 
 	@staticmethod
 	def getPathPublic(current):
 		if current == "":
+			path= Storage.publicDataPath
+		else:
+			path= os.path.join(Storage.publicDataPath, current)
+		if not isSafePath(Storage.publicDataPath,path):
 			return Storage.publicDataPath
-		return os.path.join(Storage.publicDataPath, current)
+		return path
 
 	@staticmethod
 	def canDownload(name, current, fileName):
@@ -66,6 +86,20 @@ class Storage:
 			path = os.path.join(Storage.privateDataPath, name, fileName)
 		else:
 			path = os.path.join(Storage.privateDataPath, name, current, fileName)
+		
+		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
+			return False
+		return os.path.exists(path)
+	
+	@staticmethod
+	def canDownloadPublic(current, fileName):
+		if current == "":
+			path = os.path.join(Storage.publicDataPath, fileName)
+		else:
+			path = os.path.join(Storage.publicDataPath, current, fileName)
+		
+		if not isSafePath(Storage.publicDataPath,path):
+			return False
 		return os.path.exists(path)
 
 	@staticmethod

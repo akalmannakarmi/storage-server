@@ -69,5 +69,7 @@ def download(filename):
 @app.route('/downloadPublic/<filename>',methods=["GET"])
 @isUser
 def downloadPublic(filename):
-	path = Storage.getPathPublic(request.args.get("current",""))
-	return send_from_directory(path, filename, as_attachment=True)
+	if Storage.canDownloadPublic(request.args.get("current",""),filename):
+		path = Storage.getPathPublic(request.args.get("current",""))
+		return send_from_directory(path, filename, as_attachment=True)
+	return render_template("/basic/warn.html",msg="You can not Download the file")
