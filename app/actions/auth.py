@@ -13,7 +13,7 @@ def login():
 	rq=['name','password']
 	if any(i not in data for i in rq):
 		result = {"Require":{','.join(rq)}}
-		return jsonify(result)
+		return render_template('/basic/fail.html',msg=result)
 
 	user = User.query.filter_by(name=data['name']).first()
 	if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password):
@@ -31,8 +31,8 @@ def signUp():
 	
 	rq=['name','password']
 	if any(i not in data for i in rq):
-		result = {"Require":{','.join(rq)}}
-		return jsonify(result)
+		result = f"Require:{','.join(rq)}"
+		return render_template('/basic/fail.html',msg=result)
 		
 	if len(data['name']) > 64:
 		return redirect('/signUp?error=name too long')
