@@ -17,7 +17,7 @@ class Storage:
 	def createAccount(name):
 		path=os.path.join(Storage.privateDataPath, name)
 		if not isSafePath(Storage.privateDataPath,path):
-			return False
+			raise BaseException("Not Safe Path")
 		os.makedirs(path, exist_ok=True)
 		Storage.updateFileTree()
 		return True
@@ -30,7 +30,7 @@ class Storage:
 			path = os.path.join(Storage.privateDataPath, name, current, os.path.dirname(fileName))
 		
 		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
-			return False
+			raise BaseException("Not Safe Path")
 		
 		os.makedirs(path, exist_ok=True)
 
@@ -49,7 +49,7 @@ class Storage:
 			path = os.path.join(Storage.publicDataPath, current, os.path.dirname(fileName))
 		
 		if not isSafePath(Storage.publicDataPath,path):
-			return False
+			raise BaseException("Not Safe Path")
 		
 		os.makedirs(path, exist_ok=True)
 
@@ -67,7 +67,7 @@ class Storage:
 		else:
 			path= os.path.join(Storage.privateDataPath,name, current)
 		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
-			return Storage.privateDataPath
+			raise BaseException("Not Safe Path")
 		return path
 
 	@staticmethod
@@ -77,7 +77,7 @@ class Storage:
 		else:
 			path= os.path.join(Storage.publicDataPath, current)
 		if not isSafePath(Storage.publicDataPath,path):
-			return Storage.publicDataPath
+			raise BaseException("Not Safe Path")
 		return path
 
 	@staticmethod
@@ -88,7 +88,7 @@ class Storage:
 			path = os.path.join(Storage.privateDataPath, name, current, fileName)
 		
 		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
-			return False
+			raise BaseException("Not Safe Path")
 		return os.path.exists(path)
 	
 	@staticmethod
@@ -99,7 +99,7 @@ class Storage:
 			path = os.path.join(Storage.publicDataPath, current, fileName)
 		
 		if not isSafePath(Storage.publicDataPath,path):
-			return False
+			raise BaseException("Not Safe Path")
 		return os.path.exists(path)	
 
 	@staticmethod
@@ -110,7 +110,7 @@ class Storage:
 			path = os.path.join(Storage.privateDataPath, name, current, fileName)
 		
 		if not isSafePath(os.path.join(Storage.privateDataPath, name),path):
-			return False
+			raise BaseException("Not Safe Path")
 		if os.path.isfile(path):
 			os.remove(path)
 			Storage.updateFileTree()

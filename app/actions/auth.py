@@ -5,6 +5,7 @@ from app.models import User
 from app.wrapers import isUser,isNotUser
 from storage import Storage
 import bcrypt
+import re
 
 @app.route('/login',methods=["POST"])
 @isNotUser
@@ -19,7 +20,6 @@ def login():
 	if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password):
 		session['userId']=user.id
 		session['name']=user.name
-		Storage.createAccount(user.name)
 		return redirect(request.form.get("next",'/'))
 	
 	return redirect('/login?error=Incorrect name or password')
@@ -36,6 +36,13 @@ def signUp():
 		
 	if len(data['name']) > 64:
 		return redirect('/signUp?error=name too long')
+	
+	pattern=re.compile(r'[^a-zA-Z0-9\s]')
+	if bool(pattern.search(data['name'])):
+		return redirect('/signUp?error=invalid username')
+	
+	if not Storage.createAccount(data['name']):
+		return redirect('/signUp?error=cant create account')
 
 	hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
 	new_user = User(name=data['name'],password=hashed_password,kind="user")
