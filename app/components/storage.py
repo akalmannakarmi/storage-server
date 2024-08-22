@@ -45,3 +45,24 @@ def publicFiles():
 		pathDict[folder] = current_path
 
 	return render_template('_components/storage/publicFiles.html',session=session,current=current,data=data,pathDict=pathDict)
+
+
+@app.route('/myImages',methods=["GET"])
+@isUser
+def myImages():
+	image = Storage.getMyImage(session["name"],int(request.args.get("skip",0)),request.args.get("current",""))
+	if not image:
+		return ""
+	image = f"/download/{image}"
+	return render_template('_components/storage/myImages.html',session=session,image=image,current=request.args.get("current",""),skip=int(request.args.get("skip",0))+1)
+
+
+@app.route('/publicImages',methods=["GET"])
+@isUser
+def publicImages():
+	image = Storage.getPublicImage(int(request.args.get("skip",0)),request.args.get("current",""))
+	if not image:
+		return ""
+	image = f"/downloadPublic/{image}"
+	return render_template('_components/storage/publicImages.html',session=session,image=image,current=request.args.get("current",""),skip=int(request.args.get("skip",0))+1)
+

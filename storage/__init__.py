@@ -82,6 +82,7 @@ class Storage:
 
 	@staticmethod
 	def canDownload(name, current, fileName):
+		print(f"Here {fileName}")
 		if current == "":
 			path = os.path.join(Storage.privateDataPath, name, fileName)
 		else:
@@ -121,3 +122,63 @@ class Storage:
 	def updateFileTree(update=True):
 		Storage.fileTree = getFileTree(Storage.dataPath,update)
 		return Storage.fileTree
+	
+	@staticmethod
+	def getMyImage(name,skip,current=""):
+		extensions=(".png", ".jpg", ".jpeg", ".gif")
+		folders = current.split(os.sep)
+		count = 0
+		nth_image = None
+		
+		def traverse_dict(d,back):
+			nonlocal count, nth_image, extensions
+			for key, value in d.items():
+				if isinstance(value, dict):
+					if traverse_dict(value,[*back,key]):
+						return True # Stop found in nested traversal
+				else:
+					if key.lower().endswith(extensions):
+						if count == skip:
+							nth_image = ""
+							for b in back:
+								nth_image = os.path.join(nth_image,b)
+							nth_image = os.path.join(nth_image,key)
+							return True  # Stop further traversal
+						count += 1
+			return False  # Continue traversal if nth image is not found
+
+		d = Storage.fileTree["private"][name]
+		for folder in folders:
+			if folder in d:
+				d = d[folder]
+		traverse_dict(d,[])
+		return nth_image
+	
+	@staticmethod
+	def getPublicImage(skip,current=""):
+		extensions=(".png", ".jpg", ".jpeg", ".gif")
+		folders = current.split(os.sep)
+		count = 0
+		nth_image = None
+		
+		def traverse_dict(d):
+			nonlocal count, nth_image, extensions
+			for key, value in d.items():
+				if isinstance(value, dict):
+					if traverse_dict(value):
+						return True # Stop found in nested traversal
+				else:
+					if key.lower().endswith(extensions):
+						if count == skip:
+							nth_image = key
+							return True  # Stop further traversal
+						count += 1
+			return False  # Continue traversal if nth image is not found
+
+		d = Storage.fileTree["public"]
+		for folder in folders:
+			if folder in d:
+				d = d[folder]
+		traverse_dict(d)
+		return nth_image
+	

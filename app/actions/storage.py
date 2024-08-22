@@ -64,7 +64,7 @@ def uploadPublic():
 		return render_template("/basic/warn.html",msg=result)
 	return render_template("/basic/success.html",msg="Successfully Uploaded")
 
-@app.route('/download/<filename>',methods=["GET"])
+@app.route('/download/<path:filename>',methods=["GET"])
 @isUser
 def download(filename):
 	if Storage.canDownload(session["name"],request.args.get("current",""),filename):
@@ -73,7 +73,7 @@ def download(filename):
 	return render_template("/basic/warn.html",msg="You can not Download the file")
 
 
-@app.route('/downloadPublic/<filename>',methods=["GET"])
+@app.route('/downloadPublic/<path:filename>',methods=["GET"])
 @isUser
 def downloadPublic(filename):
 	if Storage.canDownloadPublic(request.args.get("current",""),filename):

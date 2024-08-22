@@ -11,3 +11,15 @@ def myFiles():
 @isUser
 def publicFiles():
     return render_template('storage/publicFiles.html',session=session,current=request.args.get("current",""))
+
+@app.route('/myImages',methods=["GET"])
+@isUser
+def myImages():
+    return render_template('storage/myImages.html',session=session,current=request.args.get("current",""))
+
+
+@app.route('/publicImages',methods=["GET"])
+@isUser
+def publicImages():
+    return render_template('storage/publicImages.html',session=session,current=request.args.get("current",""))
+

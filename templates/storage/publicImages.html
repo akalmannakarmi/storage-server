@@ -1,0 +1,45 @@
+{% set subPage = 'publicImages' %}
+
+{% extends 'storage/base.html' %}
+
+{% block title %} Public Images {% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+	<h1 class="container pt-5">Public Images</h1>
+	<div id="carouselExampleControls" class="carousel carousel-dark slide">
+		<div class="carousel-inner">
+			<div class="carousel-item active w-100" style="height: 80vh;">
+				<img src="/static/img/icon.png" alt="Go Next" style="width: 100%; height: 100%; object-fit: contain;" >
+			</div>
+			<div hx-get="/components/publicImages?current={{current}}" hx-trigger="load" hx-swap="outerHTML" id="next-image"></div>
+		</div>
+		<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="visually-hidden">Previous</span>
+		</button>
+		<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="visually-hidden">Next</span>
+		</button>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleControls'),{});
+				var nextButton = document.querySelector('.carousel-control-next');
+				nextButton.focus();
+				nextButton.addEventListener('blur', function() {
+						nextButton.focus();
+				});
+			});
+			document.getElementById('carouselExampleControls').addEventListener('slide.bs.carousel', function (event) {
+					if (event.direction === 'left') {
+							const next = document.getElementById('next-image');
+							if (next){
+								htmx.trigger(document.getElementById('next-image'), 'click');
+							}
+					}
+			});
+		</script>
+	</div>
+</div>
+{% endblock %}
