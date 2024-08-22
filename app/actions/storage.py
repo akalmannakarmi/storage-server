@@ -1,7 +1,7 @@
 from flask import render_template,session,request,redirect,jsonify,send_from_directory
 from . import app
 from app.wrapers import isUser
-from storage import Storage,isAllowed
+from storage import Storage,isAllowed,isSafePath
 import os
 
 @app.route('/upload',methods=["POST"])
@@ -22,6 +22,9 @@ def upload():
 				fails.append(f"{file.filename} Already Exists!")
 				continue
 			path = Storage.getPath(session["name"],request.form.get("current",""))
+			if not isSafePath(path,file.filename):
+				fails.append(f"{file.filename} Unsafe Filename!")
+				continue
 			
 			file.save(os.path.join(path, file.filename))
 	
@@ -48,6 +51,10 @@ def uploadPublic():
 				fails.append(f"{file.filename} Already Exists!")
 				continue
 			path = Storage.getPathPublic(request.form.get("current",""))
+			
+			if not isSafePath(path,file.filename):
+				fails.append(f"{file.filename} Unsafe Filename!")
+				continue
 
 			file.save(os.path.join(path, file.filename))
 
