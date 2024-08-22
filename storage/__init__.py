@@ -125,7 +125,7 @@ class Storage:
 	
 	@staticmethod
 	def getMyImage(name,skip,current=""):
-		extensions=(".png", ".jpg", ".jpeg", ".gif")
+		extensions = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".ico")
 		folders = current.split(os.sep)
 		count = 0
 		nth_image = None
@@ -156,21 +156,24 @@ class Storage:
 	
 	@staticmethod
 	def getPublicImage(skip,current=""):
-		extensions=(".png", ".jpg", ".jpeg", ".gif")
+		extensions = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".ico")
 		folders = current.split(os.sep)
 		count = 0
 		nth_image = None
 		
-		def traverse_dict(d):
+		def traverse_dict(d,back):
 			nonlocal count, nth_image, extensions
 			for key, value in d.items():
 				if isinstance(value, dict):
-					if traverse_dict(value):
+					if traverse_dict(value,[*back,key]):
 						return True # Stop found in nested traversal
 				else:
 					if key.lower().endswith(extensions):
 						if count == skip:
-							nth_image = key
+							nth_image = ""
+							for b in back:
+								nth_image = os.path.join(nth_image,b)
+							nth_image = os.path.join(nth_image,key)
 							return True  # Stop further traversal
 						count += 1
 			return False  # Continue traversal if nth image is not found
@@ -179,6 +182,6 @@ class Storage:
 		for folder in folders:
 			if folder in d:
 				d = d[folder]
-		traverse_dict(d)
+		traverse_dict(d,[])
 		return nth_image
 	
