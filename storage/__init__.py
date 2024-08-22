@@ -11,7 +11,7 @@ class Storage:
 		os.makedirs(Storage.publicDataPath, exist_ok=True)
 		os.makedirs(Storage.privateDataPath, exist_ok=True)
 
-		Storage.fileTree = Storage.updateFileTree()
+		Storage.fileTree = Storage.updateFileTree(False)
 
 	@staticmethod
 	def createAccount(name):
@@ -118,6 +118,6 @@ class Storage:
 		return False
 
 	@staticmethod
-	def updateFileTree():
-		Storage.fileTree = getFileTree(Storage.dataPath)
+	def updateFileTree(update=True):
+		Storage.fileTree = getFileTree(Storage.dataPath,update)
 		return Storage.fileTree
